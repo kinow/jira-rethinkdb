@@ -1,0 +1,3 @@
+data/
+rethinkdb_data/
+.env
