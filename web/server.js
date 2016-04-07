@@ -7,9 +7,10 @@ var app = express();
 app.engine('html', mustacheExpress());
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
-app.use('/static', express.static(__dirname + '/public'));
 
-var r = require('rethinkdb')
+app.use(express.static('public'));
+
+var r = require('rethinkdb');
 
 var connection = null;
 r.connect( {host: '172.17.0.2', port: 28015}, function(err, conn) {
@@ -21,7 +22,8 @@ app.get('/', function (req, res) {
     var perMonth = r.db('jira')
         .table('issues')
         .group(
-            r.row('created').slice(0, 7)
+            r.row('created').slice(0, 7),
+            r.row('type')
         )
         .count()
         .run(connection, function(err, cursor) {
@@ -32,7 +34,7 @@ app.get('/', function (req, res) {
                 var data = [];
                 for (var i = 0; i < result.length; i++) {
                     var entry = result[i];
-                    data.push({ "Value": entry.reduction, "Month": entry.group });
+                    data.push({ "Count": entry.reduction, "Type": entry.group[1], "Month": entry.group[0] });
                 }
                 res.render('report_1', {'data': JSON.stringify(data) });
             });
