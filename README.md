@@ -15,10 +15,10 @@ And then you can get the IP address with:
 
 You must create a dotEnv file in your project local directory, with the following contents:
 
-JIRA=${JIRAURL}
-USERNAME=${JIRAUSER}
-PASSWORD=${ITSPASS}
-RETHINKDB=${RETHINKDBIP}
+    JIRA=${JIRAURL}
+    USERNAME=${JIRAUSER}
+    PASSWORD=${ITSPASS}
+    RETHINKDB=${RETHINKDBIP}
 
 ## Dependencies
 
