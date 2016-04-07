@@ -12,7 +12,6 @@ with open('.env', 'r') as f:
 
 from jira import JIRA
 import rethinkdb as r
-from pprint import pprint
 
 def filter_issues(issues):
     filtered = []
@@ -46,41 +45,47 @@ def main():
     }
     jira = JIRA(options, basic_auth=(config['USERNAME'], config['PASSWORD']))
 
-    total_issues = 0
-
     months = [
-        '2015-03',
-        '2015-04',
-        '2015-05',
-        '2015-06',
-        '2015-07',
-        '2015-08',
-        '2015-09',
-        '2015-10',
-        '2015-11',
-        '2015-12',
-        '2016-01',
-        '2016-02',
-        '2016-03',
+        ('2015-03', '2015-04'),
+        ('2015-04', '2015-05'),
+        ('2015-05', '2015-06'),
+        ('2015-06', '2015-07'),
+        ('2015-07', '2015-08'),
+        ('2015-08', '2015-09'),
+        ('2015-09', '2015-10'),
+        ('2015-10', '2015-11'),
+        ('2015-11', '2015-12'),
+        ('2015-12', '2016-01'),
+        ('2016-01', '2016-02'),
+        ('2016-02', '2016-03'),
+        ('2016-03', '2016-04')
     ]
 
-    issues_in_month = jira.search_issues("created >= '2014-03-01' AND created < '2014-04-01'", maxResults=1000, json_result=True)
-    issues = issues_in_month['issues']
-    total_issues = len(issues)
+    total_issues = 0
+    bulk_add = []
+    for month in months:
+        print("Downloading issues for interval %s/%s" % month)
+        jql = "created >= '%s-01' AND created < '%s-01'" % month
+        issues_in_month = jira.search_issues(jql, maxResults=1000, json_result=True)
+        issues = issues_in_month['issues']
+        
+        filtered_issues = filter_issues(issues)
+        issues_count = len(issues)
+        filtered_count = len(filtered_issues)
+        
+        assert filtered_count == issues_count
 
-    filtered_issues = filter_issues(issues)
+        total_issues = total_issues + issues_count
 
-    assert len(filtered_issues) == total_issues
-
-    #pprint(filtered_issues)
+        bulk_add.extend(filtered_issues)
 
     print("Successfully downloaded %d issues" % total_issues)
-    print("Loading issues into RethinkDB")
+    print("Loading %d issues into RethinkDB" % len(bulk_add))
 
     r.connect(config['RETHINKDB'], 28015, db='jira').repl()
     r.table_drop('issues').run()
     r.table_create('issues').run()
-    r.table('issues').insert(filtered_issues).run()
+    r.table('issues').insert(bulk_add).run()
 
     print("OK! Bye")
 
