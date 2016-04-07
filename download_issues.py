@@ -70,14 +70,19 @@ def main():
 
     filtered_issues = filter_issues(issues)
 
-    pprint(filtered_issues)
+    assert len(filtered_issues) == total_issues
+
+    #pprint(filtered_issues)
 
     print("Successfully downloaded %d issues" % total_issues)
     print("Loading issues into RethinkDB")
 
-    r.connect(config['RETHINKDB'], 28015, db='issues').repl()
-    r.table('issues').delete()
-    r.table('issues').insert(issues).run()
+    r.connect(config['RETHINKDB'], 28015, db='jira').repl()
+    r.table_drop('issues').run()
+    r.table_create('issues').run()
+    r.table('issues').insert(filtered_issues).run()
+
+    print("OK! Bye")
 
 if __name__ == '__main__':
     main()
