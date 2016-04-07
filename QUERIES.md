@@ -7,3 +7,11 @@ r.db('jira').table('issues').group(
   r.row('created').slice(0, 10)
 ).count()
 ```
+
+### Issues created per month
+
+```
+r.db('jira').table('issues').group(
+  r.row('created').slice(0, 7)
+).count()
+```

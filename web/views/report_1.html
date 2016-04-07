@@ -1,0 +1,25 @@
+<head>
+<meta charset="utf-8">
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://dimplejs.org/dist/dimple.v2.1.6.min.js"></script>
+<title>JIRA Reports</title>
+</head>
+<body>
+    <h1>Issues per month</h1>
+    <div id="chartContainer">
+        <script type="text/javascript">
+        var svg = dimple.newSvg("#chartContainer", '100%', 400),
+            data = {{{ data }}},
+            chart = new dimple.chart(svg, data),
+            x = chart.addCategoryAxis("x", "Month"),
+            y = chart.addMeasureAxis("y", "Value"),
+            s = chart.addSeries(null, dimple.plot.bar);
+        // x.addOrderRule(function (a, b) {
+        //     // The example here uses the length of the strings to order the values in descending order.
+        //     // A negative number means that b comes before a, a positive number means a comes before b.
+        //     return b["Month"].length - a["Month"].length;
+        // });
+        chart.draw();
+        </script>
+    </div>
+</body>
