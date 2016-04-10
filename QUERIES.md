@@ -25,3 +25,36 @@ r.db('jira')
     )
   .count()
 ```
+
+### Average time tickets remain open (INcluding currently open)
+
+```
+r.db('jira')
+  .table('issues')
+  .map(function(row) {
+    return [r.ISO8601(row('created')), r.branch(row('resolutiondate').eq(null), r.now(), r.ISO8601(row('resolutiondate')))];
+  })
+  .map(function(row) {
+    //return [row(1).sub(row(0)), row(0), row(1)]; 
+    return row(1).sub(row(0)); 
+  })
+  .avg()
+```
+
+### Average time tickets remain open (EXcluding currently open)
+
+```
+r.db('jira')
+  .table('issues')
+  .filter(function(row) {
+    return row('resolutiondate').eq(null).not()
+  })
+  .map(function(row) {
+    return [r.ISO8601(row('created')), r.branch(row('resolutiondate').eq(null), r.now(), r.ISO8601(row('resolutiondate')))];
+  })
+  .map(function(row) {
+    //return [row(1).sub(row(0)), row(0), row(1)]; 
+    return row(1).sub(row(0)); 
+  })
+  .avg()
+```
