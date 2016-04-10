@@ -1,0 +1,31 @@
+<head>
+<meta charset="utf-8">
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://dimplejs.org/dist/dimple.v2.1.6.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.js"></script>
+<title>JIRA Reports</title>
+</head>
+<body>
+    <h1>How many issues per month? Which type of issue?</h1>
+    <div id="chartContainer">
+        <script type="text/javascript">
+        var svg = dimple.newSvg("#chartContainer", 600, 400),
+            data = {{{ data }}},
+            chart = new dimple.chart(svg, data),
+            x = chart.addCategoryAxis("x", "Month"),
+            y = chart.addMeasureAxis("y", "Count"),
+            s = chart.addSeries("Type", dimple.plot.bar);
+            x.addOrderRule("Month");
+        // x.addOrderRule(function (a, b) {
+        //     // The example here uses the length of the strings to order the values in descending order.
+        //     // A negative number means that b comes before a, a positive number means a comes before b.
+        //     return b["Month"].length - a["Month"].length;
+        // });
+        chart.setBounds(60, 30, 510, 305);
+        chart.addLegend(60, 10, 510, 20, "right");
+        chart.draw();
+        </script>
+    </div>
+</body>
