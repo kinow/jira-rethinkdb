@@ -20,6 +20,7 @@
             <div class="ui padded segment">
                 <div id="chartContainer">
                   <script type="text/javascript">
+                    console.log('oi');
                     var svg = dimple.newSvg("#chartContainer", 590, 400),
                       data = {{{ data }}},
 
@@ -36,8 +37,12 @@
                           height = 90,
                           totalWidth = parseFloat(svg.attr("width"));
 
+                      console.log(data);
+
                       // Pick the latest 12 dates
                       months = months.slice(months.length - 12);
+
+                      console.log(months);
 
                       // Draw a chart for each of the 12 dates
                       months.forEach(function (month) {
